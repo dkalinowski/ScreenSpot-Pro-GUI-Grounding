@@ -4,7 +4,7 @@
 
 import copy
 import itertools
-import torch
+#import torch
 import json
 import re
 import argparse
@@ -18,7 +18,7 @@ mp.set_start_method('spawn', force=True)  # Use 'spawn' to avoid issues with CUD
 from model_factory import build_model
 
 logging.basicConfig(level=logging.INFO)
-torch.manual_seed(114514)
+#torch.manual_seed(114514)
 
 GT_TYPES = ['positive', 'negative']
 INSTRUCTION_STYLES = ['instruction', 'action', 'description']
@@ -37,15 +37,16 @@ def parse_args():
     parser.add_argument('--log_path', type=str, required=True)
 
     parser.add_argument('--num_gpu', type=int, default=8, help="Number of GPUs to use for parallel processing.")
+    parser.add_argument('--max_tasks', type=int, default=None, help="Max number of tasks to run (default: all). Useful for quick test runs.")
     args = parser.parse_args()
     return args
 
 
 def initializer(gpu_queue, args):
     """Initialize each worker process with a unique GPU and load the model."""
-    gpu_index = gpu_queue.get()
-    print(f"Worker assigned to GPU {gpu_index}")
-    torch.cuda.set_device(gpu_index)
+    #gpu_index = gpu_queue.get()
+    #print(f"Worker assigned to GPU {gpu_index}")
+    #torch.cuda.set_device(gpu_index)
     model = build_model(args)
     global worker_model
     worker_model = model
@@ -297,6 +298,10 @@ def main(args):
                         tasks_to_run.append(task_instance)
         print(f"Num of sample in {task_filename}: {len(task_data)} * {len(inst_styles)} * {len(gt_types)} * {len(languages)} = {len(task_data) * len(inst_styles) * len(gt_types) * len(languages)}")
     print(f"Total tasks: {len(tasks_to_run)}")
+
+    if args.max_tasks is not None:
+        tasks_to_run = tasks_to_run[:args.max_tasks]
+        print(f"Limiting to {len(tasks_to_run)} tasks (--max_tasks={args.max_tasks})")
 
     # Create GPU queue for assigning GPUs to workers
     gpu_queue = mp.Queue()

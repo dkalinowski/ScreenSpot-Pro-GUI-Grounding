@@ -44,6 +44,14 @@ def build_model(args):
             model.load_model(model_name_or_path=model_name_or_path)
         else:
             model.load_model()
+    elif model_type == "qwen3vl-ovms":
+        from models.qwen3vl_ovms import Qwen3VLOVMSModel
+
+        model = Qwen3VLOVMSModel()
+        if args.model_name_or_path:
+            model.load_model(model_name_or_path=model_name_or_path)
+        else:
+            model.load_model()
     elif model_type == "holo1_5":
         from models.holo1_5 import Holo1_5Model
 
