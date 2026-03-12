@@ -16,8 +16,7 @@ pip install openai torch torchvision "transformers<4.58" --extra-index-url "http
 ```
 
 ```
-python3 eval_screenspot_pro_parallel.py      --model_type "qwen3vl-ovms"      --screenspot_imgs "./data/ScreenSpot-Pro/images"      --screenspot_test "./data/ScreenSpot-Pro/annotations"    
-  --task "all"     --language "en"     --gt_type "positive"     --log_path "./results/Qwen/Qwen3-VL-2B-Instruct.json"     --inst_style "instruction" --max_tasks 1
+python3 eval_screenspot_pro_parallel.py      --model_type "qwen3vl-ovms"      --screenspot_imgs "./data/ScreenSpot-Pro/images"      --screenspot_test "./data/ScreenSpot-Pro/annotations"      --task "all"     --language "en"     --gt_type "positive"     --log_path "./results/Qwen/Qwen3-VL-2B-Instruct.json"     --inst_style "instruction" --max_tasks 1
 ```
 
 ```
@@ -36,6 +35,12 @@ python export_model.py text_generation --source_model Qwen/Qwen3-VL-8B-Instruct 
 
 ```
 docker run -it --rm --device /dev/dri --group-add=$(stat -c "%g" /dev/dri/render* | head -n 1) -p 8181:8181 -v /home/devuser/dkalinow/vlm_models_with_export_models/Qwen/Qwen3-VL-2B-Instruct/:/model registry.toolbox.iotg.sclab.intel.com/openvino/model_server-gpu:dkalinow_ovms_ubuntu_qwen3-vl-gpu --rest_port 8181 --model_name vlm --model_path /model
+```
+
+
+Visualisation
+```
+python3 visualize_results.py --result results/Qwen/Qwen3-VL-2B-Instruct.json --output_dir visualized_results/Qwen3-VL-2B-Instruct
 ```
 
 TODO:

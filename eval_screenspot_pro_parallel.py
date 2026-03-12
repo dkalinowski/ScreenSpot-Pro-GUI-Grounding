@@ -61,6 +61,7 @@ def worker_function(sample):
         response = worker_model.ground_allow_negative(instruction=sample["prompt_to_evaluate"], image=img_path)
     point = response["point"]
     img_size = sample["img_size"]
+    print(img_size)
     point_in_pixel = [point[0] * img_size[0], point[1] * img_size[1]] if point else None
     sample_result = {
         "img_path": img_path,

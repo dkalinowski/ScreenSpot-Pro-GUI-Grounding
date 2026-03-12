@@ -115,14 +115,16 @@ class Qwen3VLOVMSModel:
                         args = json.loads(tool_call.function.arguments)
                         coord = args.get("coordinate")
                         if coord and len(coord) == 2:
-                            click_point = [float(coord[0]), float(coord[1])]
+                            click_point = [float(coord[0]) / resized_width, float(coord[1]) / resized_height]
                     except (json.JSONDecodeError, ValueError, TypeError) as e:
                         print("Failed to parse tool call arguments:", e)
 
         # Fallback: try extracting from text content
         if not click_point:
             bbox = extract_first_bounding_box(response_text)
-            click_point = extract_first_point(response_text)
+            point = extract_first_point(response_text)
+            if point:
+                click_point = [point[0] / resized_width, point[1] / resized_height]
 
         print("------")
         print("Response text:", response_text)
@@ -130,7 +132,7 @@ class Qwen3VLOVMSModel:
         print("Extracted point:", click_point)
 
         if not click_point and bbox:
-            click_point = [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2]
+            click_point = [((bbox[0] + bbox[2]) / 2) / resized_width, ((bbox[1] + bbox[3]) / 2) / resized_height]
 
         result_dict = {"result": "positive", "bbox": bbox, "point": click_point, "raw_response": response_text or str(message.tool_calls)}
 
